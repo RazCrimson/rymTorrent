@@ -16,7 +16,7 @@ class TorrentMetaInfo(object):
         self.announce_list = ''
         self.file_names = []
         self.number_of_pieces: int = 0
-        # self.is_private = False
+        self.is_private = False
 
     def load_from_file(self, path):
         # contents is a dict
@@ -31,8 +31,8 @@ class TorrentMetaInfo(object):
         self.info_hash = hashlib.sha1(raw_info_hash).digest()
         self.peer_id = self.generate_peer_id()
 
-        # if 'private' in meta_info['info']:
-        #     self.is_private = meta_info['info']['private']
+        if 'private' in meta_info['info']:
+            self.is_private = meta_info['info']['private']
 
         # list of lists of strings
         if 'announce-list' in meta_info:
@@ -50,21 +50,21 @@ class TorrentMetaInfo(object):
 
     def make_directories(self):
         root = self.info['name']
-        if 'files' in self.info:
+        if 'files' in self.info:    # TODO: change root to a different path
             if not os.path.exists(root):
-                os.mkdir(root, 0o0766)
+                os.mkdir(root, 0o0766)  # TODO: Too liberal permissions
 
             for file in self.info['files']:
-                path_file = os.path.join(root, *file["path"])
+                path_file = os.path.join(root, *file['path'])
 
                 if not os.path.exists(os.path.dirname(path_file)):
                     os.makedirs(os.path.dirname(path_file))
 
-                self.file_names.append({"path": path_file, "length": file["length"]})
-                self.total_length += file["length"]
+                self.file_names.append({'path': path_file, 'length': file['length']})
+                self.total_length += file['length']
         else:
-            self.file_names.append({"path": root, "length": self.info["length"]})
-            self.total_length = self.info["length"]
+            self.file_names.append({'path': root, 'length': self.info['length']})
+            self.total_length = self.info['length']
 
     # custom algo
     @staticmethod
