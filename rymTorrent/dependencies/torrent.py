@@ -6,7 +6,7 @@ import os
 
 
 class TorrentMetaInfo(object):
-    def __init__(self):
+    def __init__(self, path):
         self.info = {}
         self.total_length: int = 0
         self.piece_length: int = 0
@@ -37,7 +37,6 @@ class TorrentMetaInfo(object):
         # list of lists of strings
         if 'announce-list' in meta_info:
             self.announce_list = meta_info['announce-list']
-
         else:
             self.announce_list = [[meta_info['announce']]]
 
@@ -45,8 +44,6 @@ class TorrentMetaInfo(object):
         self.number_of_pieces = math.ceil(self.total_length / self.piece_length)
 
         print("peer_id ", self.peer_id)
-        # also test other variables
-        return self
 
     def make_directories(self):
         root = self.info['name']
